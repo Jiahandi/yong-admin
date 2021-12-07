@@ -55,18 +55,65 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/scenic-spot',
+    path: '/user',
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: '/user',
+        name: 'User',
+        component: () => import('@/views/user/index'),
+        meta: { title: '用户列表', icon: 'el-icon-user-solid' }
       }
     ]
   },
-
+  {
+    path: '/scenic',
+    component: Layout,
+    children: [
+      {
+        path: '/scenic',
+        name: 'Scenic',
+        component: () => import('@/views/scenic/index'),
+        meta: { title: '景点列表', icon: 'el-icon-place' }
+      }
+    ]
+  },
+  {
+    path: '/strategy',
+    component: Layout,
+    children: [
+      {
+        path: '/strategy',
+        name: 'Strategy',
+        component: () => import('@/views/strategy/index'),
+        meta: { title: '攻略列表', icon: 'el-icon-notebook-1' }
+      }
+    ]
+  },
+  {
+    path: '/forum',
+    component: Layout,
+    children: [
+      {
+        path: '/forum',
+        name: 'Forum',
+        component: () => import('@/views/forum/index'),
+        meta: { title: '论坛列表', icon: 'el-icon-chat-dot-square' }
+      }
+    ]
+  },
+  {
+    path: '/feedback',
+    component: Layout,
+    children: [
+      {
+        path: '/feedback',
+        name: 'Feedback',
+        component: () => import('@/views/feedback/index'),
+        meta: { title: '意见反馈', icon: 'el-icon-question' }
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,

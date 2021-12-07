@@ -4,6 +4,7 @@
       v-loading="listLoading"
       :data="list"
       element-loading-text="Loading"
+      stripe
       border
       fit
       highlight-current-row
