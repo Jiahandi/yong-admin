@@ -1,6 +1,6 @@
 <template>
-  <div class="user-list">
-    <div class="user-filter">
+  <div class="user yong-list">
+    <div class="list-top">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
           <el-col :span="6">
@@ -11,17 +11,18 @@
         </el-row>
       </el-form>
     </div>
-    <div class="user-table">
-      <div class="user-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
-      <div class="user-add">
+    <div class="list-table">
+      <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
+      <div class="list-add">
         <el-button size="mini" @click="userAdd">新增</el-button>
         <el-button size="mini">刷新</el-button>
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
+        <el-table-column type="index" width="50" />
         <el-table-column prop="avatar" label="头像" width="180" align="center">
           <template slot-scope="scope">
             <el-image
-              style="width: 100px; height: 100px"
+              style="width: 80px; height: 80px"
               :src="scope.row.avatar"
               :preview-src-list="[scope.row.avatar]"
             />
@@ -47,6 +48,12 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        :current-page="currentPage"
+        :page-size="20"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="4"
+      />
     </div>
     <OperationPanel v-if="dialogVisible" :operation-type="operationType" :dialog-visible.sync="dialogVisible" />
   </div>
@@ -82,8 +89,8 @@ export default {
         address: '上海市普陀区金沙江路 1516 弄'
       }],
       dialogVisible: false,
-      operationType: 'add'
-
+      operationType: 'add',
+      currentPage: 1
     }
   },
   methods: {
@@ -99,29 +106,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.user-list{
-  width: 96%;
-  margin: 0 auto;
-  margin-top: 20px;
-  .user-filter{
-    padding: 10px 0;
-    width: 100%;
-    height: 60px;
-    background-color: #f5f7fa;
-    margin-bottom: 20px;
-  }
-  .user-table{
-    border: 1px solid #f5f7fa;
-    padding-top: 20px;
-    .user-title{
-      margin-left: 10px;
-      color: #409eff;
-      float:left;
-    }
-    .user-add{
-      float: right;
-      margin-right: 10px;
-    }
-  }
+.user{
+
 }
 </style>

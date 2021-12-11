@@ -63,3 +63,30 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+
+.yong-list{
+  width: 96%;
+  margin: 0 auto;
+  margin-top: 20px;
+  .list-top{
+    padding: 10px 0;
+    width: 100%;
+    height: 60px;
+    background-color: #f5f7fa;
+    margin-bottom: 20px;
+  }
+  .list-table{
+    border: 1px solid #f5f7fa;
+    padding-top: 20px;
+    .list-title{
+      margin-left: 10px;
+      color: #409eff;
+      float:left;
+    }
+    .list-add{
+      float: right;
+      margin-right: 10px;
+    }
+  }
+
+}
