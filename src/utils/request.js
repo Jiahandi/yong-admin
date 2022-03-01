@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -7,7 +7,13 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  // 请求头信息
+  headers: {
+    'Content-Type': 'application/json;charset=UTF-8'
+  },
+  timeout: 5000, // request timeout
+  // 返回数据类型
+  responseType: 'json'
 })
 
 // request interceptor
@@ -43,42 +49,78 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    let res = response.data
+    // 如果是返回的文件
+    if (response.config.responseType === 'blob') {
+      return res
+    }
+    // 兼容服务端返回的字符串数据
+    if (typeof res === 'string') {
+      res = res ? JSON.parse(res) : res
+    }
+    return res
+  },
+  error => {
+    console.log('HTTP错误', error.response) // HTTP错误
+    if (error && error.response) {
+      switch (error.response.status) {
+        case 400:
+          error.message = '请求错误'
+          break
+        case 401:
+          error.message = '账户登录过期，点击确定重新登录授权'
+          break
+        case 403:
+          error.message = '拒绝访问'
+          break
+        case 404:
+          error.message = `请求地址出错: ${error.response.config.url}`
+          break
+        case 405:
+          error.message = '请求方法不被允许'
+          break
+        case 408:
+          error.message = '请求超时'
+          break
+        case 500:
+          error.message = '服务器内部错误'
+          break
+        case 501:
+          error.message = '服务未实现'
+          break
+        case 502:
+          error.message = '网关错误'
+          break
+        case 503:
+          error.message = '服务不可用'
+          break
+        case 504:
+          error.message = '网关超时'
+          break
+        case 505:
+          error.message = 'HTTP版本不受支持'
+          break
+        default:
+      }
+    }
+    if (error.response && error.response.status === 401) {
+      store.dispatch('user/logout')
+      return
+    } else {
+      let errorMsg = error.message
+      if (errorMsg.includes('timeout')) {
+        errorMsg = '网络超时'
+      }
+      if (errorMsg.includes('Network Error')) {
+        errorMsg = '服务器开小差了'
+      }
       Message({
-        message: res.message || 'Error',
+        message: errorMsg,
         type: 'error',
         duration: 5 * 1000
       })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+      return Promise.reject(error)
     }
-  },
-  error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    return Promise.reject(error)
   }
 )
 
