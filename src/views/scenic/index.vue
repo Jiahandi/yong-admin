@@ -46,12 +46,13 @@
         <el-table-column prop="time" label="开放时间" align="center" />
         <el-table-column prop="tag" label="主题" align="center" />
         <el-table-column prop="score" label="评分" align="center" />
-        <el-table-column prop="price" label="价格" align="center" />
-        <el-table-column prop="tel" label="联系方式" align="center">
+        <el-table-column prop="price" label="价格" align="center">
           <template slot-scope="scope">
             {{ scope.row.price ? scope.row.price : "免费" }}
           </template>
         </el-table-column>
+        <el-table-column prop="tel" label="联系方式" align="center" />
+
         <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
             <el-button
@@ -64,6 +65,7 @@
               size="mini"
               type="danger"
               plain
+              style="margin-right:5px"
               @click="handleDelete(scope.$index, scope.row)"
             >删除</el-button>
           </template>

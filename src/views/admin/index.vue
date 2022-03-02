@@ -1,11 +1,11 @@
 <template>
-  <div class="user yong-list">
+  <div class="admin yong-list">
     <div class="list-top">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
           <el-col :span="6">
-            <el-form-item label="用户名称">
-              <el-input v-model="form.name" @keydown.enter.native="load" />
+            <el-form-item label="管理员ID">
+              <el-input v-model="form.adid" @keydown.enter.native="load" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -18,32 +18,19 @@
     <div class="list-table">
       <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
       <div class="list-add">
-        <el-button size="mini" @click="userAdd">新增</el-button>
+        <el-button size="mini" @click="adminAdd">新增</el-button>
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="id" label="ID" width="50" />
-        <el-table-column prop="avatar" label="头像" width="180" align="center">
-          <template slot-scope="scope">
-            <el-image
-              style="width: 80px; height: 80px"
-              :src="scope.row.avatar"
-              :preview-src-list="[scope.row.avatar]"
-            />
+        <el-table-column prop="adid" label="ID" width="150" />
 
-          </template>
+        <el-table-column prop="adpassword" label="密码" align="center">
+          <template slot-scope="scope">{{ scope.row.adpassword }}</template>
         </el-table-column>
-
-        <el-table-column prop="username" label="用户名" align="center">
-          <template slot-scope="scope">{{ scope.row.username }}</template>
+        <el-table-column prop="type" label="管理员编号" align="center">
+          <template slot-scope="scope">{{ scope.row.type }}</template>
         </el-table-column>
-        <el-table-column prop="password" label="密码" align="center">
-          <template slot-scope="scope">{{ scope.row.password }}</template>
-        </el-table-column>
-        <el-table-column prop="tel" label="电话" align="center">
-          <template slot-scope="scope">{{ scope.row.password }}</template>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱" align="center" />
+        <el-table-column prop="typename" label="管理员类型" align="center" />
         <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
             <el-button
@@ -82,14 +69,12 @@
 </template>
 
 <script>
-import OperationPanel from '../user/operationPanel.vue'
+import OperationPanel from '../admin/operationPanel.vue'
 import request from '@/utils/request'
 const initDataRow = {
-  avatar: '',
-  name: '',
-  password: '',
-  tel: '',
-  email: ''
+  adpassword: '',
+  type: '',
+  typename: ''
 }
 export default {
   name: 'User',
@@ -119,11 +104,11 @@ export default {
   methods: {
     load() {
       // 请求分页查询数据
-      request.get('http://localhost:9090/user/page?', {
+      request.get('http://localhost:9090/admin/page?', {
         params: {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
-          username: this.form.name
+          adid: this.form.adid
         }
       }).then(res => {
         console.log(res)
@@ -131,9 +116,9 @@ export default {
         this.total = res.total
       })
     },
-    userAdd() {
+    adminAdd() {
       this.newData = { ...initDataRow }
-      this.newData['type'] = 'add'
+      this.newData['opentype'] = 'add'
       this.dialogVisible = true
     },
     reset() {
@@ -160,12 +145,12 @@ export default {
     },
     handleEdit(row) {
       this.newData = row
-      this.newData['type'] = 'update'
+      this.newData['opentype'] = 'update'
       this.dialogVisible = true
     },
     handleDelete(row) {
       // console.log('row', row)
-      request.delete('http://localhost:9090/user/' + row.id).then(res => {
+      request.delete('http://localhost:9090/admin/' + row.adid).then(res => {
         if (res) {
           this.$message.success('删除成功')
           this.load()
@@ -179,7 +164,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.user{
+.admin{
 
 }
 </style>

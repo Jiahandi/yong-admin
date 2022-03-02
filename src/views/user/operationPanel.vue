@@ -150,7 +150,7 @@ export default {
             } else {
               this.$message.success('编辑成功')
             }
-            this.handleClose()
+            this.$emit('close-panel')
           } else {
             this.$message.error(res['message'] || '保存失败')
           }

@@ -43,6 +43,7 @@
               size="mini"
               type="primary"
               plain
+              style="margin-right:5px"
               @click="handleEdit(scope.$index, scope.row)"
             >编辑</el-button>
             <el-button
