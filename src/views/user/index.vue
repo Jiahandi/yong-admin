@@ -83,7 +83,7 @@
 
 <script>
 import OperationPanel from '../user/operationPanel.vue'
-import request from '@/utils/request'
+import { getUserListPage, deleteUser } from '@/api/user'
 const initDataRow = {
   avatar: '',
   name: '',
@@ -119,14 +119,12 @@ export default {
   methods: {
     load() {
       // 请求分页查询数据
-      request.get('http://localhost:9090/user/page?', {
-        params: {
-          pageNum: this.currentPage,
-          pageSize: this.pageSize,
-          username: this.form.name
-        }
+      getUserListPage({
+        pageNum: this.currentPage,
+        pageSize: this.pageSize,
+        username: this.form.name
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res.records
         this.total = res.total
       })
@@ -165,7 +163,7 @@ export default {
     },
     handleDelete(row) {
       // console.log('row', row)
-      request.delete('http://localhost:9090/user/' + row.id).then(res => {
+      deleteUser({ id: row.id }).then(res => {
         if (res) {
           this.$message.success('删除成功')
           this.load()

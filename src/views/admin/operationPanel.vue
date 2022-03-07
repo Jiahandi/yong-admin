@@ -7,6 +7,9 @@
     :before-close="handleClose"
   >
     <el-form ref="newData" :rules="rules" :model="newData" label-width="80px">
+      <el-form-item label="账号" prop="adname">
+        <el-input v-model="newData.adname" />
+      </el-form-item>
       <el-form-item label="密码" prop="adpassword">
         <el-input v-model="newData.adpassword" />
       </el-form-item>
@@ -25,7 +28,7 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+import { addAdmin } from '@/api/admin'
 const initDataRow = {
   adpassword: '',
   type: '',
@@ -56,6 +59,9 @@ export default {
       imgDialogVisible: false,
       disabled: false,
       rules: {
+        adname: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
         adpassword: [
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
@@ -77,13 +83,15 @@ export default {
       this.submiting = true
       const typename = this.newData.type === 0 ? '普通管理员' : '超级管理员'
       console.log('保存列表', this.newData)
-      const promise = this.newData.adid ? request.post('http://localhost:9090/admin', {
+      const promise = this.newData.adid ? addAdmin({
         adid: this.newData.adid,
-        adpassword: this.newData.password,
+        adname: this.newData.adname,
+        adpassword: this.newData.adpassword,
         type: this.newData.type,
         typename: typename
-      }) : request.post('http://localhost:9090/admin', {
-        adpassword: this.newData.password,
+      }) : addAdmin({
+        adpassword: this.newData.adpassword,
+        adname: this.newData.adname,
         type: this.newData.type,
         typename: typename
       })
@@ -91,7 +99,7 @@ export default {
         res => {
           this.submiting = false
           if (res) {
-            if (this.newData.type === 'add') {
+            if (this.newData.opentype === 'add') {
               this.$message.success('新增成功')
             } else {
               this.$message.success('编辑成功')

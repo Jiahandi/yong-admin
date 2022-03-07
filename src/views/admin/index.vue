@@ -23,7 +23,9 @@
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
         <el-table-column prop="adid" label="ID" width="150" />
-
+        <el-table-column prop="adname" label="账号" align="center">
+          <template slot-scope="scope">{{ scope.row.adname }}</template>
+        </el-table-column>
         <el-table-column prop="adpassword" label="密码" align="center">
           <template slot-scope="scope">{{ scope.row.adpassword }}</template>
         </el-table-column>
@@ -70,7 +72,7 @@
 
 <script>
 import OperationPanel from '../admin/operationPanel.vue'
-import request from '@/utils/request'
+import { getAdminListPage, deleteAdmin } from '@/api/admin'
 const initDataRow = {
   adpassword: '',
   type: '',
@@ -104,14 +106,12 @@ export default {
   methods: {
     load() {
       // 请求分页查询数据
-      request.get('http://localhost:9090/admin/page?', {
-        params: {
-          pageNum: this.currentPage,
-          pageSize: this.pageSize,
-          adid: this.form.adid
-        }
+      getAdminListPage({
+        pageNum: this.currentPage,
+        pageSize: this.pageSize,
+        adid: this.form.adid
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res.records
         this.total = res.total
       })
@@ -150,7 +150,7 @@ export default {
     },
     handleDelete(row) {
       // console.log('row', row)
-      request.delete('http://localhost:9090/admin/' + row.adid).then(res => {
+      deleteAdmin({ id: row.adid }).then(res => {
         if (res) {
           this.$message.success('删除成功')
           this.load()

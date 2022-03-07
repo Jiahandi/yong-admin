@@ -1,36 +1,36 @@
 import request from '@/utils/request'
 
 // 分页查询
-export function getUserListPage(params) {
+export function getStrategyListPage(params) {
   return request({
-    url: '/user/page?',
+    url: '/strategy/page?',
     method: 'get',
     params
   })
 }
 
 // 查询所有
-export function getUserList(params) {
+export function getStrategyList(params) {
   return request({
-    url: '/user',
+    url: '/strategy',
     method: 'get',
     params
   })
 }
 
 // 删除
-export function deleteUser(params) {
+export function deleteStrategy(params) {
   return request({
-    url: '/user/delete',
+    url: '/strategy/delete',
     method: 'delete',
     params
   })
 }
 
 // 新增-修改
-export function addUser(data) {
+export function addStrategy(data) {
   return request({
-    url: '/user',
+    url: '/strategy',
     method: 'post',
     data
   })

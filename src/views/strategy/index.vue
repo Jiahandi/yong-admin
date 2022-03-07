@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="主题">
-              <el-select v-model="themeValue" placeholder="请选择">
+              <el-select v-model="themeValue" placeholder="请选择" @change="load">
                 <el-option
                   v-for="item in filterTheme"
                   :key="item.value"
@@ -20,6 +20,10 @@
               <el-input v-model="form.keywords" />
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-button style="margin-left:10px;" @click="load">搜索</el-button>
+            <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+          </el-col>
         </el-row>
       </el-form>
     </div>
@@ -30,17 +34,16 @@
         <el-button size="mini">刷新</el-button>
       </div>
       <el-table :data="strategyList" stripe style="width: 100%">
-        <el-table-column type="index" width="50" />
-        <el-table-column prop="username" label="发布用户" align="center" />
-        <el-table-column prop="title" label="标题" align="center" />
-        <el-table-column prop="spot" label="相关景点" align="center" />
-        <el-table-column prop="tag" label="主题" align="center" />
-        <!-- <el-table-column prop="place" label="地址" align="center" /> -->
-        <el-table-column prop="pageview" label="浏览量" align="center" />
-        <el-table-column prop="content" label="内容" align="center" />
-        <el-table-column prop="date" label="日期" align="center" />
-        <el-table-column prop="love" label="喜欢量" align="center" />
-        <el-table-column prop="collect" label="收藏量" align="center" />
+        <el-table-column prop="strategyId" width="100" />
+        <el-table-column prop="straUser" label="发布用户" align="center" />
+        <el-table-column prop="straTitle" label="标题" align="center" />
+        <el-table-column prop="straScenic" label="相关景点" align="center" />
+        <el-table-column prop="straThemename" label="主题" align="center" />
+        <!-- <el-table-column prop="straCollect" label="浏览量" align="center" /> -->
+        <el-table-column prop="straContent" label="内容" align="center" />
+        <el-table-column prop="straTime" label="日期" align="center" />
+        <el-table-column prop="straLove" label="喜欢量" align="center" />
+        <el-table-column prop="straCollect" label="收藏量" align="center" />
         <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
             <el-button
@@ -48,22 +51,29 @@
               type="primary"
               plain
               style="margin-right:5px"
-              @click="handleEdit(scope.$index, scope.row)"
+              @click="handleEdit(scope.row)"
             >编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              plain
-              @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button>
+            <el-popconfirm
+              confirm-button-text="删除"
+              cancel-button-text="取消"
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除该数据吗？"
+              @onConfirm="handleDelete(scope.row)"
+            >
+              <el-button slot="reference" size="mini" type="danger" plain>删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         :current-page="currentPage"
-        :page-size="20"
+        :page-sizes="[2,5,10,20]"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="4"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -71,6 +81,7 @@
 
 <script>
 import Theme from '@/common/theme'
+import { getStrategyListPage, deleteStrategy } from '@/api/strategy'
 export default {
   name: 'Strategy',
   data() {
@@ -80,82 +91,62 @@ export default {
       },
       themeValue: '',
       filterTheme: Theme.tagTheme,
-      strategyList: [
-        {
-          imageList: [
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' }],
-          userAvater: '/static/image/mine/avatar.jpg',
-          username: '游客',
-          title: '雪窦山一日游',
-          spot: '雪窦山',
-          tagId: 4,
-          tag: '自然游',
-          place: '宁波市奉化区溪口镇西北',
-          pageview: '500',
-          content: '哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈',
-          date: '2021-11-18',
-          love: '400',
-          collect: '212'
-        },
-        {
-          imageList: [
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' }],
-          userAvater: '/static/image/mine/avatar.jpg',
-          username: 'wwwwwww',
-          title: '雪窦山一日游',
-          spot: '雪窦山',
-          tagId: 4,
-          tag: '自然游',
-          place: '宁波市奉化区溪口镇西北',
-          pageview: '500',
-          content: '这里很美',
-          date: '2021-11-18',
-          love: '400',
-          collect: '212'
-        },
-        {
-          imageList: [
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' },
-            { id: 1, src: 'url1', image: '/static/image/home/advertisement1.jpg' },
-            { id: 2, src: 'url2', image: '/static/image/home/advertisement2.jpg' },
-            { id: 3, src: 'url3', image: '/static/image/home/advertisement3.jpg' }],
-          userAvater: '/static/image/mine/avatar.jpg',
-          username: '游客',
-          title: '动物园哈哈哈哈',
-          spot: '雅戈尔动物园',
-          tagId: 4,
-          tag: '自然游',
-          place: '宁波市奉化区溪口镇西北',
-          pageview: '500',
-          content: '推荐推荐',
-          date: '2021-11-18',
-          love: '400',
-          collect: '212'
-        }
-      ],
-      currentPage: 1
+      strategyList: [],
+      currentPage: 1,
+      pageSize: 2,
+      total: 0
     }
+  },
+  created() {
+    this.load()
+  },
+  methods: {
+
+    load() {
+      // 请求分页查询数据
+      getStrategyListPage({
+        pageNum: this.currentPage,
+        pageSize: this.pageSize,
+        straThemeid: this.themeValue,
+        straTitle: this.form.keywords
+      }).then(res => {
+        console.log(res)
+        this.strategyList = res.records
+        this.total = res.total
+      })
+    },
+    reset() {
+      this.form.keywords = ''
+      this.themeValue = ''
+      this.load()
+    },
+    handleSizeChange(pageSize) {
+      console.log(pageSize)
+      this.pageSize = pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      console.log(pageNum)
+      this.currentPage = pageNum
+      this.load()
+    },
+    handleEdit(row) {
+      this.newData = row
+      this.newData['opentype'] = 'update'
+      this.dialogVisible = true
+    },
+    handleDelete(row) {
+      // console.log('row', row)
+      deleteStrategy({ id: row.strategyId }).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.load()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    }
+
   }
 
 }

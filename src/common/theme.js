@@ -1,6 +1,6 @@
 const tagTheme = [
   {
-    value: 0,
+    value: '',
     label: '全部'
   },
   {

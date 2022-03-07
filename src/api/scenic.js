@@ -1,36 +1,36 @@
 import request from '@/utils/request'
 
 // 分页查询
-export function getUserListPage(params) {
+export function getScenicListPage(params) {
   return request({
-    url: '/user/page?',
+    url: '/scenic/page?',
     method: 'get',
     params
   })
 }
 
 // 查询所有
-export function getUserList(params) {
+export function getScenicList(params) {
   return request({
-    url: '/user',
+    url: '/scenic',
     method: 'get',
     params
   })
 }
 
 // 删除
-export function deleteUser(params) {
+export function deleteScenic(params) {
   return request({
-    url: '/user/delete',
+    url: '/scenic/delete',
     method: 'delete',
     params
   })
 }
 
 // 新增-修改
-export function addUser(data) {
+export function addScenic(data) {
   return request({
-    url: '/user',
+    url: '/scenic',
     method: 'post',
     data
   })

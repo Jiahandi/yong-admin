@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+import { addUser } from '@/api/user'
 const initDataRow = {
   avatar: '',
   name: '',
@@ -129,13 +129,13 @@ export default {
     submitUpdate() {
       this.submiting = true
       console.log('保存列表', this.newData)
-      const promise = this.newData.id ? request.post('http://localhost:9090/user', {
+      const promise = this.newData.id ? addUser({
         id: this.newData.id,
         username: this.newData.username,
         password: this.newData.password,
         tel: this.newData.tel,
         email: this.newData.email
-      }) : request.post('http://localhost:9090/user', {
+      }) : addUser({
         username: this.newData.username,
         password: this.newData.password,
         tel: this.newData.tel,

@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="主题">
-              <el-select v-model="themeValue" placeholder="请选择">
+              <el-select v-model="themeValue" placeholder="请选择" @change="change">
                 <el-option
                   v-for="item in filterTheme"
                   :key="item.value"
@@ -20,6 +20,10 @@
               <el-input v-model="form.name" />
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-button style="margin-left:10px;" @click="load">搜索</el-button>
+            <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+          </el-col>
         </el-row>
       </el-form>
     </div>
@@ -30,8 +34,8 @@
         <el-button size="mini">刷新</el-button>
       </div>
       <el-table :data="scenicList" stripe style="width: 100%">
-        <el-table-column type="index" width="50" />
-        <el-table-column prop="image" label="图片" align="center">
+        <el-table-column prop="scenicId" width="100" />
+        <el-table-column prop="scePicture" label="图片" align="center">
           <template slot-scope="scope">
             <el-image
               style="width: 80px; height: 80px"
@@ -40,18 +44,34 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="景点名称" align="center" />
-        <el-table-column prop="content" label="简介" align="center" />
-        <el-table-column prop="place" label="地址" align="center" />
-        <el-table-column prop="time" label="开放时间" align="center" />
-        <el-table-column prop="tag" label="主题" align="center" />
-        <el-table-column prop="score" label="评分" align="center" />
-        <el-table-column prop="price" label="价格" align="center">
+        <el-table-column prop="sceName" label="景点名称" align="center" />
+        <el-table-column prop="sceIntro" label="简介" align="center">
           <template slot-scope="scope">
-            {{ scope.row.price ? scope.row.price : "免费" }}
+            {{ scope.row.sceIntro ? scope.row.sceIntro : "-" }}
           </template>
         </el-table-column>
-        <el-table-column prop="tel" label="联系方式" align="center" />
+        <el-table-column prop="sceAddress" label="地址" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.sceAddress ? scope.row.sceAddress : "-" }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="sceOpentime" label="开放时间" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.sceOpentime ? scope.row.sceOpentime : "-" }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="sceThemename" label="主题" align="center" />
+        <el-table-column prop="sceScore" label="评分" align="center" />
+        <el-table-column prop="scePrice" label="价格" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.scePrice ? scope.row.scePrice : "免费" }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="sceTel" label="联系方式" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.sceTel ? scope.row.sceTel : "-" }}
+          </template>
+        </el-table-column>
 
         <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
@@ -59,23 +79,30 @@
               size="mini"
               type="primary"
               plain
-              @click="handleEdit(scope.$index, scope.row)"
-            >编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              plain
               style="margin-right:5px"
-              @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button>
+              @click="handleEdit(scope.row)"
+            >编辑</el-button>
+            <el-popconfirm
+              confirm-button-text="删除"
+              cancel-button-text="取消"
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除该数据吗？"
+              @onConfirm="handleDelete(scope.row)"
+            >
+              <el-button slot="reference" size="mini" type="danger" plain>删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         :current-page="currentPage"
-        :page-size="20"
+        :page-sizes="[2,5,10,20]"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="4"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -83,6 +110,7 @@
 
 <script>
 import Theme from '@/common/theme'
+import { getScenicListPage, deleteScenic } from '@/api/scenic'
 export default {
   name: 'Scenic',
   data() {
@@ -92,58 +120,65 @@ export default {
       },
       themeValue: '',
       filterTheme: Theme.tagTheme,
-      scenicList: [
-        {
-          image: require('../../assets/scenic_images/strategy1.jpg'),
-          title: '雅戈尔动物园',
-          content: '中国水域面积最大的野生动物园',
-          place: '宁波市鄞州区鄞县大道(东钱湖旅游度假区)',
-          time: '9:00-16:30 周一闭关，法定节假日除外',
-          tagId: 4,
-          tag: '自然游',
-          score: '4.7',
-          price: '122.0',
-          tel: '15844255536'
-        },
-        {
-          image: require('../../assets/scenic_images/strategy2.jpg'),
-          title: '天一阁博物馆',
-          content: '园林中的藏书楼',
-          place: '浙江省宁波市海曙区天一街10号',
-          time: '9:00-16:30 周一闭关，法定节假日除外',
-          tagId: 3,
-          tag: '文化游',
-          score: '3.0',
-          price: '',
-          tel: '15844255536'
-        },
-        {
-          image: require('../../assets/scenic_images/strategy3.jpg'),
-          title: '月湖',
-          content: '宁波人的后花园',
-          place: '宁波市海曙区县学街183号-2',
-          time: '9:00-16:30 周一闭关，法定节假日除外',
-          tagId: 4,
-          tag: '自然游',
-          score: '2.0',
-          price: '',
-          tel: '15844255536'
-        },
-        {
-          image: require('../../assets/scenic_images/strategy4.jpg'),
-          title: '庆安会馆',
-          content: '清代古建筑杰作',
-          place: '鄞州区江东北路156号',
-          time: '9:00-16:30 周一闭关，法定节假日除外',
-          tagId: 1,
-          tag: '红色游',
-          score: '5.0',
-          price: '7.0',
-          tel: '15844255536'
-        }
-      ],
-      currentPage: 1
+      scenicList: [],
+      currentPage: 1,
+      pageSize: 2,
+      total: 0
     }
+  },
+  created() {
+    this.load()
+  },
+  methods: {
+    change() {
+      console.log('this.themeValue', this.themeValue)
+      this.load()
+    },
+    load() {
+      // 请求分页查询数据
+      getScenicListPage({
+        pageNum: this.currentPage,
+        pageSize: this.pageSize,
+        sceName: this.form.name,
+        sceThemeid: this.themeValue
+      }).then(res => {
+        console.log(res)
+        this.scenicList = res.records
+        this.total = res.total
+      })
+    },
+    reset() {
+      this.form.name = ''
+      this.themeValue = ''
+      this.load()
+    },
+    handleSizeChange(pageSize) {
+      console.log(pageSize)
+      this.pageSize = pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      console.log(pageNum)
+      this.currentPage = pageNum
+      this.load()
+    },
+    handleEdit(row) {
+      this.newData = row
+      this.newData['opentype'] = 'update'
+      this.dialogVisible = true
+    },
+    handleDelete(row) {
+      // console.log('row', row)
+      deleteScenic({ id: row.scenicId }).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.load()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    }
+
   }
 
 }

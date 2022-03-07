@@ -41,14 +41,15 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="handleLogin">登录</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="saveOnSubmit">登录</el-button>
 
     </el-form>
   </div>
 </template>
 
 <script>
-import request from '@/utils/request'
+// import request from '@/utils/request'
+import { login } from '@/api/admin'
 export default {
   name: 'Login',
   data() {
@@ -58,8 +59,8 @@ export default {
         adpassword: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur' }],
-        password: [{ required: true, trigger: 'blur' }]
+        adname: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        adpassword: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
@@ -86,18 +87,33 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+      login(this.loginForm).then(res => {
+        this.loading = true
+        console.log('res', res)
+        if (!res) {
+          this.$message.error('用户名或密码错误')
+          setTimeout(() => {
             this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
+          }, 1000)
         } else {
-          console.log('error submit!!')
-          return false
+          this.$message.success('登录成功')
+          setTimeout(() => {
+            this.loading = false
+            this.$router.push({ path: this.redirect || '/home' })
+          }, 500)
+        }
+      }).catch(_ => {
+        this.loading = false
+        this.$message.error('登录失败')
+      })
+    },
+    saveOnSubmit() {
+      this.$refs['loginForm'].validate((valid) => {
+        if (valid) {
+          this.handleLogin()
+          return
+        } else {
+          this.$message.error('必填项不能为空')
         }
       })
     }
