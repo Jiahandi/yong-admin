@@ -134,12 +134,12 @@ export default {
       this.load()
     },
     handleSizeChange(pageSize) {
-      console.log(pageSize)
+      // console.log(pageSize)
       this.pageSize = pageSize
       this.load()
     },
     handleCurrentChange(pageNum) {
-      console.log(pageNum)
+      // console.log(pageNum)
       this.currentPage = pageNum
       this.load()
     },

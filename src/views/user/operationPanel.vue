@@ -119,9 +119,7 @@ export default {
       submiting: false
     }
   },
-  created() {
-    console.log('this.newData', this.newData)
-  },
+
   methods: {
     handleClose() {
       this.$emit('update:dialogVisible', false)

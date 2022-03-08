@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="主题">
-              <el-select v-model="themeValue" placeholder="请选择" @change="change">
+              <el-select v-model="themeValue" placeholder="请选择" @change="load">
                 <el-option
                   v-for="item in filterTheme"
                   :key="item.value"
@@ -17,12 +17,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="景点名称">
-              <el-input v-model="form.name" />
+              <el-input v-model="form.name" @keydown.enter.native="load" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-button style="margin-left:10px;" @click="load">搜索</el-button>
-            <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+            <el-button type="primary" style="margin-left:10px;" @click="refresh">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -30,8 +30,8 @@
     <div class="list-table">
       <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
       <div class="list-add">
-        <el-button size="mini">新增</el-button>
-        <el-button size="mini">刷新</el-button>
+        <el-button size="mini" @click="scenicAdd">新增</el-button>
+        <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="scenicList" stripe style="width: 100%">
         <el-table-column prop="scenicId" width="100" />
@@ -105,14 +105,30 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <OperationPanel v-if="dialogVisible" :new-data="newData" :dialog-visible.sync="dialogVisible" @close-panel="closePanel" />
   </div>
 </template>
 
 <script>
 import Theme from '@/common/theme'
+import OperationPanel from '../scenic/operationPanel.vue'
 import { getScenicListPage, deleteScenic } from '@/api/scenic'
+const initDataRow = {
+  scePicture: '',
+  sceName: '',
+  sceIntro: '',
+  sceAddress: '',
+  sceOpentime: '',
+  sceThemeid: '',
+  sceScore: 0,
+  scePrice: '',
+  sceTel: ''
+}
 export default {
   name: 'Scenic',
+  components: {
+    OperationPanel
+  },
   data() {
     return {
       form: {
@@ -123,17 +139,15 @@ export default {
       scenicList: [],
       currentPage: 1,
       pageSize: 2,
-      total: 0
+      total: 0,
+      dialogVisible: false,
+      newData: initDataRow
     }
   },
   created() {
     this.load()
   },
   methods: {
-    change() {
-      console.log('this.themeValue', this.themeValue)
-      this.load()
-    },
     load() {
       // 请求分页查询数据
       getScenicListPage({
@@ -142,29 +156,38 @@ export default {
         sceName: this.form.name,
         sceThemeid: this.themeValue
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.scenicList = res.records
         this.total = res.total
       })
     },
-    reset() {
+    scenicAdd() {
+      this.newData = { ...initDataRow }
+      this.newData['type'] = 'add'
+      this.dialogVisible = true
+    },
+    refresh() {
       this.form.name = ''
       this.themeValue = ''
       this.load()
     },
+    closePanel() {
+      this.dialogVisible = false
+      this.load()
+    },
     handleSizeChange(pageSize) {
-      console.log(pageSize)
+      // console.log(pageSize)
       this.pageSize = pageSize
       this.load()
     },
     handleCurrentChange(pageNum) {
-      console.log(pageNum)
+      // console.log(pageNum)
       this.currentPage = pageNum
       this.load()
     },
     handleEdit(row) {
       this.newData = row
-      this.newData['opentype'] = 'update'
+      this.newData['type'] = 'update'
       this.dialogVisible = true
     },
     handleDelete(row) {

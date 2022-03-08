@@ -89,7 +89,7 @@ export default {
     handleLogin() {
       login(this.loginForm).then(res => {
         this.loading = true
-        console.log('res', res)
+        // console.log('res', res)
         if (!res) {
           this.$message.error('用户名或密码错误')
           setTimeout(() => {
@@ -99,7 +99,7 @@ export default {
           this.$message.success('登录成功')
           setTimeout(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/home' })
+            this.$router.push({ path: '/home' })
           }, 500)
         }
       }).catch(_ => {

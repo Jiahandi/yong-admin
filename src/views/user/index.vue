@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="6">
             <el-button style="margin-left:10px;" @click="load">搜索</el-button>
-            <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+            <el-button type="primary" style="margin-left:10px;" @click="refresh">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -134,10 +134,7 @@ export default {
       this.newData['type'] = 'add'
       this.dialogVisible = true
     },
-    reset() {
-      this.form.name = ''
-      this.load()
-    },
+
     refresh() {
       this.form.name = ''
       this.load()
@@ -147,12 +144,12 @@ export default {
       this.load()
     },
     handleSizeChange(pageSize) {
-      console.log(pageSize)
+      // console.log(pageSize)
       this.pageSize = pageSize
       this.load()
     },
     handleCurrentChange(pageNum) {
-      console.log(pageNum)
+      // console.log(pageNum)
       this.currentPage = pageNum
       this.load()
     },
