@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    class="scenic-panel"
+    class="feedback-panel"
     :title="newData.type === 'add' ? '新增':'编辑'"
     :visible.sync="dialogVisible"
     :destroy-on-close="true"
@@ -8,7 +8,7 @@
     :before-close="handleClose"
   >
     <el-form ref="newData" :rules="rules" :model="newData" label-width="80px">
-      <el-form-item label="景点图片">
+      <el-form-item label="反馈图片">
         <el-upload
           action="#"
           list-type="picture-card"
@@ -50,48 +50,15 @@
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
       </el-form-item>
-      <el-form-item label="景点名称" prop="sceName">
-        <el-input v-model="newData.sceName" />
+      <el-form-item label="反馈用户" prop="fbUser">
+        <el-input v-model="newData.fbUser" />
       </el-form-item>
-      <el-form-item label="简介" prop="sceIntro">
+      <el-form-item label="反馈内容" prop="fbContent">
         <el-input
-          v-model="newData.sceIntro"
+          v-model="newData.fbContent"
           type="textarea"
           :rows="2"
         />
-      </el-form-item>
-      <el-form-item label="地址" prop="sceAddress">
-        <el-input v-model="newData.sceAddress" />
-      </el-form-item>
-      <el-form-item label="开放时间" prop="sceOpentime">
-        <el-input v-model="newData.sceOpentime" />
-      </el-form-item>
-      <el-form-item label="主题" prop="sceThemeid">
-        <el-select v-model="newData.sceThemeid" placeholder="请选择">
-          <el-option
-            v-for="item in filterTheme"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="newData.type === 'add'" label="评分" prop="sceScore">
-        <el-rate
-          v-model="newData.sceScore"
-        />
-      </el-form-item>
-      <el-form-item v-else label="评分" prop="sceScore">
-        <el-rate
-          v-model="newData.sceScore"
-          disabled
-          show-score
-          text-color="#ff9900"
-          score-template="{value}"
-        />
-      </el-form-item>
-      <el-form-item label="价格" prop="scePrice">
-        <el-input v-model="newData.scePrice" />
       </el-form-item>
     </el-form>
 
@@ -103,14 +70,11 @@
 </template>
 
 <script>
-import { addScenic } from '@/api/scenic'
-import Theme from '@/common/theme'
+import { addFeedback } from '@/api/feedback'
 const initDataRow = {
-  forumName: '',
-  forumTitle: '',
-  forumCategoryid: 0,
-  forumContent: '',
-  forumPageview: ''
+  fbUser: '',
+  fbContent: '',
+  fbImage: ''
 }
 export default {
   name: 'OperationPanel',
@@ -136,13 +100,12 @@ export default {
       dialogImageUrl: '',
       imgDialogVisible: false,
       disabled: false,
-      filterTheme: Theme.tagTheme.filter(el => el.value !== ''),
       rules: {
-        sceName: [
-          { required: true, message: '请输入景点名', trigger: 'blur' }
+        fbUser: [
+          { required: true, message: '请输入反馈用户', trigger: 'blur' }
         ],
-        sceThemeid: [
-          { required: true, message: '请选择主题类别', trigger: 'change' }
+        fbContent: [
+          { required: true, message: '请输入反馈内容', trigger: 'blur' }
         ]
       },
       submiting: false
@@ -155,44 +118,16 @@ export default {
     },
     submitUpdate() {
       this.submiting = true
-      switch (this.newData.sceThemeid) {
-        case 1: this.newData.sceThemename = '综合游'
-          break
-        case 2: this.newData.sceThemename = '红色游'
-          break
-        case 3: this.newData.sceThemename = '文化游'
-          break
-        case 4: this.newData.sceThemename = '自然游'
-          break
-        case 5: this.newData.sceThemename = '美食游'
-          break
-        default:
-          break
-      }
       console.log('保存列表', this.newData)
-      const promise = this.newData.scenicId ? addScenic({
-        scenicId: this.newData.scenicId,
-        scePicture: this.newData.scePicture,
-        sceName: this.newData.sceName,
-        sceIntro: this.newData.sceIntro,
-        sceAddress: this.newData.sceAddress,
-        sceOpentime: this.newData.sceOpentime,
-        sceThemename: this.newData.sceThemename,
-        sceThemeid: this.newData.sceThemeid,
-        sceScore: this.newData.sceScore,
-        scePrice: this.newData.scePrice,
-        sceTel: this.newData.sceTel
-      }) : addScenic({
-        scePicture: this.newData.scePicture,
-        sceName: this.newData.sceName,
-        sceIntro: this.newData.sceIntro,
-        sceAddress: this.newData.sceAddress,
-        sceOpentime: this.newData.sceOpentime,
-        sceThemename: this.newData.sceThemename,
-        sceThemeid: this.newData.sceThemeid,
-        sceScore: this.newData.sceScore,
-        scePrice: this.newData.scePrice,
-        sceTel: this.newData.sceTel
+      const promise = this.newData.fbId ? addFeedback({
+        fbUser: this.newData.fbUser,
+        fbImage: this.newData.fbImage,
+        fbContent: this.newData.fbContent
+      }) : addFeedback({
+        fbId: this.newData.fbId,
+        fbUser: this.newData.fbUser,
+        fbImage: this.newData.fbImage,
+        fbContent: this.newData.fbContent
       })
       promise.then(
         res => {

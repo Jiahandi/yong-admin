@@ -3,7 +3,7 @@
     <div class="list-top">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="主题">
               <el-select v-model="themeValue" placeholder="请选择" @change="load">
                 <el-option
@@ -15,12 +15,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="景点名称">
               <el-input v-model="form.name" @keydown.enter.native="load" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-button style="margin-left:10px;" @click="load">搜索</el-button>
             <el-button type="primary" style="margin-left:10px;" @click="refresh">重置</el-button>
           </el-col>
@@ -34,7 +34,7 @@
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="scenicList" stripe style="width: 100%">
-        <el-table-column prop="scenicId" width="100" />
+        <el-table-column prop="scenicId" label="景点编号" width="100" />
         <el-table-column prop="scePicture" label="图片" align="center">
           <template slot-scope="scope">
             <el-image

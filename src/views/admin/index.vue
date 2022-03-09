@@ -3,12 +3,12 @@
     <div class="list-top">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="管理员ID">
               <el-input v-model="form.adid" @keydown.enter.native="load" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-button style="margin-left:10px;" @click="load">搜索</el-button>
             <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
           </el-col>

@@ -89,7 +89,7 @@ export default {
       dialogImageUrl: '',
       imgDialogVisible: false,
       disabled: false,
-      filterTheme: Theme.tagTheme,
+      filterTheme: Theme.tagTheme.filter(el => el.value !== ''),
       rules: {
         straUser: [
           { required: true, message: '请输入发布人', trigger: 'blur' }
