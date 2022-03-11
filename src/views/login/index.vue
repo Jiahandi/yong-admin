@@ -90,17 +90,19 @@ export default {
       login(this.loginForm).then(res => {
         this.loading = true
         // console.log('res', res)
-        if (!res) {
-          this.$message.error('用户名或密码错误')
-          setTimeout(() => {
-            this.loading = false
-          }, 1000)
-        } else {
+        if (res.code === '200') {
+          // 存储用户信息到浏览器
+          localStorage.setItem('admin', JSON.stringify(res.data))
           this.$message.success('登录成功')
           setTimeout(() => {
             this.loading = false
             this.$router.push({ path: '/home' })
           }, 500)
+        } else {
+          this.$message.error(res.msg)
+          setTimeout(() => {
+            this.loading = false
+          }, 1000)
         }
       }).catch(_ => {
         this.loading = false
