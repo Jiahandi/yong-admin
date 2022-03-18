@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    class="user-dialog"
     :title="newData.type === 'add' ? '新增':'编辑'"
     :visible.sync="dialogVisible"
     :destroy-on-close="true"
@@ -21,7 +22,7 @@
       </el-form-item>
       <el-form-item label="头像">
         <el-upload
-          action="#"
+          action="http://localhost:9090/file/upload"
           list-type="picture-card"
           :auto-upload="false"
           :limit="limit"
@@ -57,8 +58,8 @@
             </span>
           </div>
         </el-upload>
-        <el-dialog :visible.sync="imgDialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
+        <el-dialog visible.sync="true">
+          <img width="100%" :src="newData.avatar" alt="">
         </el-dialog>
       </el-form-item>
     </el-form>
@@ -167,10 +168,25 @@ export default {
           this.$message.error('必填项不能为空')
         }
       })
+    },
+    handleRemove(file) {
+      console.log(file)
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    handleDownload(file) {
+      console.log(file)
     }
   }
 }
 
 </script>
-<style scoped>
+<style scoped lang="scss">
+.user-dialog{
+  .avatar{
+    width: 150px;
+  }
+}
 </style>
