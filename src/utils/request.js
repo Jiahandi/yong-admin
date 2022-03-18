@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
-
+import ElementUI from 'element-ui'
 // create an axios instance
 const service = axios.create({
   baseURL: 'http://localhost:9090', // url = base url + request url
@@ -20,13 +19,11 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+    const admin = localStorage.getItem('admin') ? JSON.parse(localStorage.getItem('admin')) : null
+    if (admin) {
+      config.headers['token'] = admin.token
     }
+
     return config
   },
   error => {
@@ -57,6 +54,12 @@ service.interceptors.response.use(
     // 兼容服务端返回的字符串数据
     if (typeof res === 'string') {
       res = res ? JSON.parse(res) : res
+    }
+    if (res.code === '401') {
+      ElementUI.Message({
+        message: res.message,
+        type: 'error'
+      })
     }
     return res
   },
