@@ -26,11 +26,12 @@
         <el-table-column prop="avatar" label="头像" width="180" align="center">
           <template slot-scope="scope">
             <el-image
+              v-if="scope.row.avatar"
               style="width: 80px; height: 80px"
               :src="scope.row.avatar"
               :preview-src-list="[scope.row.avatar]"
             />
-
+            <div v-else>-</div>
           </template>
         </el-table-column>
 
@@ -41,9 +42,11 @@
           <template slot-scope="scope">{{ scope.row.password }}</template>
         </el-table-column>
         <el-table-column prop="tel" label="电话" align="center">
-          <template slot-scope="scope">{{ scope.row.password }}</template>
+          <template slot-scope="scope">{{ scope.row.tel ? scope.row.tel : '-' }}</template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" align="center" />
+        <el-table-column prop="email" label="邮箱" align="center">
+          <template slot-scope="scope">{{ scope.row.email ? scope.row.email : '-' }}</template>
+        </el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
             <el-button

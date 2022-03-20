@@ -34,11 +34,12 @@
         <el-table-column prop="fbImage" label="发布图片" width="180" align="center">
           <template slot-scope="scope">
             <el-image
+              v-if="scope.row.fbImage"
               style="width: 80px; height: 80px"
-              :src="scope.row.avatar"
-              :preview-src-list="[scope.row.avatar]"
+              :src="scope.row.fbImage"
+              :preview-src-list="[scope.row.fbImage]"
             />
-
+            <div v-else>-</div>
           </template>
         </el-table-column>
         <el-table-column prop="fbTime" label="发布时间" align="center" />

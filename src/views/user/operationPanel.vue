@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    class="user-dialog"
     :title="newData.type === 'add' ? '新增':'编辑'"
     :visible.sync="dialogVisible"
     :destroy-on-close="true"
@@ -19,47 +20,16 @@
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="newData.email" />
       </el-form-item>
-      <el-form-item label="头像">
+      <el-form-item label="头像" prop="avatar">
         <el-upload
-          action="#"
-          list-type="picture-card"
-          :auto-upload="false"
-          :limit="limit"
+          class="avatar-uploader"
+          action="http://localhost:9090/file/upload"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
         >
-          <i slot="default" class="el-icon-plus" />
-          <div slot="file" slot-scope="{file}">
-            <img
-              class="el-upload-list__item-thumbnail"
-              :src="file.url"
-              alt=""
-            >
-            <span class="el-upload-list__item-actions">
-              <span
-                class="el-upload-list__item-preview"
-                @click="handlePictureCardPreview(file)"
-              >
-                <i class="el-icon-zoom-in" />
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleDownload(file)"
-              >
-                <i class="el-icon-download" />
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete" />
-              </span>
-            </span>
-          </div>
+          <img v-if="newData.avatar" :src="newData.avatar" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
-        <el-dialog :visible.sync="imgDialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -111,9 +81,6 @@ export default {
         ],
         tel: [
           { required: true, message: '请输入电话', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' }
         ]
       },
       submiting: false
@@ -132,12 +99,14 @@ export default {
         username: this.newData.username,
         password: this.newData.password,
         tel: this.newData.tel,
-        email: this.newData.email
+        email: this.newData.email,
+        avatar: this.newData.avatar
       }) : addUser({
         username: this.newData.username,
         password: this.newData.password,
         tel: this.newData.tel,
-        email: this.newData.email
+        email: this.newData.email,
+        avatar: this.newData.avatar
       })
       promise.then(
         res => {
@@ -167,10 +136,38 @@ export default {
           this.$message.error('必填项不能为空')
         }
       })
+    },
+    handleAvatarSuccess(res) {
+      this.newData.avatar = res
     }
   }
 }
 
 </script>
-<style scoped>
+<style scoped lang="scss">
+.user-dialog{
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+}
 </style>

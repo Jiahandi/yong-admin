@@ -8,47 +8,16 @@
     :before-close="handleClose"
   >
     <el-form ref="newData" :rules="rules" :model="newData" label-width="80px">
-      <el-form-item label="反馈图片">
+      <el-form-item label="反馈图片" prop="fbImage">
         <el-upload
-          action="#"
-          list-type="picture-card"
-          :auto-upload="false"
-          :limit="limit"
+          class="avatar-uploader"
+          action="http://localhost:9090/file/upload"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
         >
-          <i slot="default" class="el-icon-plus" />
-          <div slot="file" slot-scope="{file}">
-            <img
-              class="el-upload-list__item-thumbnail"
-              :src="file.url"
-              alt=""
-            >
-            <span class="el-upload-list__item-actions">
-              <span
-                class="el-upload-list__item-preview"
-                @click="handlePictureCardPreview(file)"
-              >
-                <i class="el-icon-zoom-in" />
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleDownload(file)"
-              >
-                <i class="el-icon-download" />
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete" />
-              </span>
-            </span>
-          </div>
+          <img v-if="newData.fbImage" :src="newData.fbImage" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
-        <el-dialog :visible.sync="imgDialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
       </el-form-item>
       <el-form-item label="反馈用户" prop="fbUser">
         <el-input v-model="newData.fbUser" />
@@ -157,15 +126,41 @@ export default {
           this.$message.error('必填项不能为空')
         }
       })
+    },
+    handleAvatarSuccess(res) {
+      this.newData.fbImage = res
     }
   }
 }
 
 </script>
 <style scoped lang="scss">
-.scenic-panel{
+.feedback-panel{
   .el-rate{
     line-height: 2.5;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 }
 </style>

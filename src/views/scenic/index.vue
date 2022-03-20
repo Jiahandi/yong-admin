@@ -38,10 +38,12 @@
         <el-table-column prop="scePicture" label="图片" align="center">
           <template slot-scope="scope">
             <el-image
+              v-if="scope.row.scePicture"
               style="width: 80px; height: 80px"
-              :src="scope.row.image"
-              :preview-src-list="[scope.row.image]"
+              :src="scope.row.scePicture"
+              :preview-src-list="[scope.row.scePicture]"
             />
+            <div v-else>-</div>
           </template>
         </el-table-column>
         <el-table-column prop="sceName" label="景点名称" align="center" />
@@ -187,6 +189,7 @@ export default {
     },
     handleEdit(row) {
       this.newData = row
+      console.log('this.newData', this.newData)
       this.newData['type'] = 'update'
       this.dialogVisible = true
     },
