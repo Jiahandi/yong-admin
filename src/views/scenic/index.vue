@@ -34,7 +34,7 @@
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="scenicList" stripe style="width: 100%">
-        <el-table-column prop="scenicId" label="景点编号" width="100" />
+        <el-table-column type="index" label="#" width="36" :index="indexMethod" align="right" />
         <el-table-column prop="scePicture" label="图片" align="center">
           <template slot-scope="scope">
             <el-image
@@ -99,7 +99,7 @@
       </el-table>
       <el-pagination
         :current-page="currentPage"
-        :page-sizes="[2,5,10,20]"
+        :page-sizes="[5,10,20]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -140,11 +140,19 @@ export default {
       filterTheme: Theme.tagTheme,
       scenicList: [],
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 5,
       total: 0,
       dialogVisible: false,
       newData: initDataRow
     }
+  },
+  computed: {
+    indexMethod() {
+      return i => {
+        return (this.currentPage - 1) * this.pageSize + i + 1
+      }
+    }
+
   },
   created() {
     this.load()

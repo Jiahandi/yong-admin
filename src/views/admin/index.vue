@@ -22,7 +22,8 @@
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="adid" label="ID" width="150" />
+        <el-table-column type="index" label="#" width="36" :index="indexMethod" align="right" />
+
         <el-table-column prop="adname" label="账号" align="center">
           <template slot-scope="scope">{{ scope.row.adname }}</template>
         </el-table-column>
@@ -58,7 +59,7 @@
       </el-table>
       <el-pagination
         :current-page="currentPage"
-        :page-sizes="[2,5,10,20]"
+        :page-sizes="[5,10,20]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -95,9 +96,16 @@ export default {
       dialogVisible: false,
       operationType: 'add',
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 5,
       total: 0,
       newData: initDataRow
+    }
+  },
+  computed: {
+    indexMethod() {
+      return i => {
+        return (this.currentPage - 1) * this.pageSize + i + 1
+      }
     }
   },
   created() {
