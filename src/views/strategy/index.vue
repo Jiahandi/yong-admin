@@ -30,7 +30,7 @@
     <div class="list-table">
       <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
       <div class="list-add">
-        <el-button size="mini" @click="strategyAdd">新增</el-button>
+        <!-- <el-button size="mini" @click="strategyAdd">新增</el-button> -->
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="strategyList" stripe style="width: 100%">
@@ -47,13 +47,13 @@
         <el-table-column prop="straPageview" label="浏览量" align="center" />
         <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               size="mini"
               type="primary"
               plain
               style="margin-right:5px"
               @click="handleEdit(scope.row)"
-            >编辑</el-button>
+            >编辑</el-button> -->
             <el-popconfirm
               confirm-button-text="删除"
               cancel-button-text="取消"

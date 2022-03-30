@@ -93,7 +93,6 @@ export default {
         fbImage: this.newData.fbImage,
         fbContent: this.newData.fbContent
       }) : addFeedback({
-        fbId: this.newData.fbId,
         fbUser: this.newData.fbUser,
         fbImage: this.newData.fbImage,
         fbContent: this.newData.fbContent
