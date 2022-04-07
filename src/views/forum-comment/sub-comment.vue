@@ -1,61 +1,50 @@
 <template>
-  <div class="user yong-list">
-    <div class="list-top">
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-row>
-          <el-col :span="4">
-            <el-form-item label="用户名称">
-              <el-input v-model="form.name" @keydown.enter.native="load" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button style="margin-left:10px;" @click="load">搜索</el-button>
-            <el-button type="primary" style="margin-left:10px;" @click="refresh">重置</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
+  <div class="sub-comment yong-list">
     <div class="list-table">
       <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
       <div class="list-add">
-        <el-button size="mini" @click="userAdd">新增</el-button>
         <el-button size="mini" @click="refresh">刷新</el-button>
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
         <el-table-column type="index" label="#" width="36" :index="indexMethod" align="right" />
-        <el-table-column prop="avatar" label="头像" width="180" align="center">
+
+        <el-table-column prop="avatar" label="被评论人头像" width="180" align="center">
           <template slot-scope="scope">
             <el-image
-              v-if="scope.row.avatar"
+              v-if="scope.row.comAvatar"
               style="width: 80px; height: 80px"
-              :src="scope.row.avatar"
-              :preview-src-list="[scope.row.avatar]"
+              :src="scope.row.comAvatar"
+              :preview-src-list="[scope.row.comAvatar]"
             />
             <div v-else>-</div>
           </template>
         </el-table-column>
+        <el-table-column prop="comName" label="被评论人名" align="center">
+          <template slot-scope="scope">{{ scope.row.comName }}</template>
+        </el-table-column>
+        <el-table-column prop="avatar" label="评论人头像" width="180" align="center">
+          <template slot-scope="scope">
+            <el-image
+              v-if="scope.row.subAvatar"
+              style="width: 80px; height: 80px"
+              :src="scope.row.subAvatar"
+              :preview-src-list="[scope.row.subAvatar]"
+            />
+            <div v-else>-</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="subName" label="评论人名" align="center">
+          <template slot-scope="scope">{{ scope.row.subName }}</template>
+        </el-table-column>
 
-        <el-table-column prop="username" label="用户名" align="center">
-          <template slot-scope="scope">{{ scope.row.username }}</template>
+        <el-table-column prop="subContent" label="评论内容" align="center">
+          <template slot-scope="scope">{{ scope.row.subContent }}</template>
         </el-table-column>
-        <el-table-column prop="tel" label="电话" align="center">
-          <template slot-scope="scope">{{ scope.row.tel ? scope.row.tel : '-' }}</template>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱" align="center">
-          <template slot-scope="scope">{{ scope.row.email ? scope.row.email : '-' }}</template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" align="center">
-          <template slot-scope="scope">{{ scope.row.createtime }}</template>
+        <el-table-column prop="subCreatetime" label="评论时间" align="center">
+          <template slot-scope="scope">{{ scope.row.subCreatetime }}</template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="primary"
-              plain
-              style="margin-right:5px"
-              @click="handleEdit(scope.row)"
-            >编辑</el-button>
             <el-popconfirm
               confirm-button-text="删除"
               cancel-button-text="取消"
@@ -80,25 +69,18 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <OperationPanel v-if="dialogVisible" :new-data="newData" :dialog-visible.sync="dialogVisible" @close-panel="closePanel" />
   </div>
 </template>
 
 <script>
-import OperationPanel from '../user/operationPanel.vue'
-import { getUserListPage, deleteUser } from '@/api/user'
+import { getSubCommentListPage, deleteSubComment } from '@/api/comment'
 const initDataRow = {
-  avatar: '',
-  name: '',
-  password: '',
-  tel: '',
-  email: ''
+  adpassword: '',
+  type: '',
+  typename: ''
 }
 export default {
   name: 'User',
-  components: {
-    OperationPanel
-  },
   data() {
     return {
       form: {
@@ -129,28 +111,16 @@ export default {
   methods: {
     load() {
       // 请求分页查询数据
-      getUserListPage({
+      getSubCommentListPage({
         pageNum: this.currentPage,
-        pageSize: this.pageSize,
-        username: this.form.name
+        pageSize: this.pageSize
       }).then(res => {
-        // console.log('用户列表', res.records)
-        this.tableData = res.records
-        this.total = res.total
+        console.log('sub-comment', res.data)
+        this.tableData = res.data.records
+        this.total = res.data.total
       })
     },
-    userAdd() {
-      this.newData = { ...initDataRow }
-      this.newData['type'] = 'add'
-      this.dialogVisible = true
-    },
-
     refresh() {
-      this.form.name = ''
-      this.load()
-    },
-    closePanel() {
-      this.dialogVisible = false
       this.load()
     },
     handleSizeChange(pageSize) {
@@ -163,14 +133,9 @@ export default {
       this.currentPage = pageNum
       this.load()
     },
-    handleEdit(row) {
-      this.newData = row
-      this.newData['type'] = 'update'
-      this.dialogVisible = true
-    },
     handleDelete(row) {
       // console.log('row', row)
-      deleteUser({ id: row.id }).then(res => {
+      deleteSubComment({ id: row.id }).then(res => {
         if (res) {
           this.$message.success('删除成功')
           this.load()
@@ -184,7 +149,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.user{
+.sub-comment{
 
 }
 </style>

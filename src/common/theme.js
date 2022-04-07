@@ -18,10 +18,6 @@ const tagTheme = [
   {
     value: 4,
     label: '自然游'
-  },
-  {
-    value: 5,
-    label: '美食游'
   }
 ]
 

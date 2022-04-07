@@ -43,7 +43,6 @@
         <el-table-column prop="straContent" label="内容" align="center" />
         <el-table-column prop="straTime" label="日期" align="center" />
         <el-table-column prop="straLove" label="喜欢量" align="center" />
-        <el-table-column prop="straCollect" label="收藏量" align="center" />
         <el-table-column prop="straPageview" label="浏览量" align="center" />
         <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
@@ -93,7 +92,6 @@ const initDataRow = {
   straContent: '',
   straTime: '',
   straLove: 0,
-  straCollect: 0,
   straPageview: 0
 }
 export default {
@@ -136,7 +134,7 @@ export default {
         straThemeid: this.themeValue,
         straTitle: this.form.keywords
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.strategyList = res.records
         this.total = res.total
       })

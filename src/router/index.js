@@ -114,6 +114,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/forum-comment',
+    name: 'ForumComment',
+    component: Layout,
+    meta: { title: '论坛评论', icon: 'el-icon-chat-line-round' },
+    children: [
+      {
+        path: '/main-comment',
+        name: ' MainComment',
+        component: () => import('@/views/forum-comment/main-comment'),
+        meta: { title: '主评论', icon: 'el-icon-chat-line-round' }
+      },
+      {
+        path: '/sub-comment',
+        name: ' SubComment',
+        component: () => import('@/views/forum-comment/sub-comment'),
+        meta: { title: '子评论', icon: 'el-icon-chat-line-round' }
+      }
+    ]
+
+  },
+  {
     path: '/feedback',
     component: Layout,
     children: [
@@ -122,6 +143,18 @@ export const constantRoutes = [
         name: 'Feedback',
         component: () => import('@/views/feedback/index'),
         meta: { title: '意见反馈', icon: 'el-icon-question' }
+      }
+    ]
+  },
+  {
+    path: '/files',
+    component: Layout,
+    children: [
+      {
+        path: '/files',
+        name: 'Files',
+        component: () => import('@/views/files/index'),
+        meta: { title: '文件上传', icon: 'el-icon-folder-opened' }
       }
     ]
   },
