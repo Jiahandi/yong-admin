@@ -54,6 +54,18 @@ export const constantRoutes = [
     }]
   },
   {
+    path: '/data-analyse',
+    component: Layout,
+    children: [
+      {
+        path: '/data-analyse',
+        name: 'DataAnalyse',
+        component: () => import('@/views/data-analyse/index'),
+        meta: { title: '数据分析', icon: 'el-icon-data-analysis' }
+      }
+    ]
+  },
+  {
     path: '/admin',
     component: Layout,
     children: [

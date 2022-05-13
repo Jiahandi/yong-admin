@@ -5,7 +5,7 @@ const tagTheme = [
   },
   {
     value: 1,
-    label: '综合游'
+    label: '特色游'
   },
   {
     value: 2,

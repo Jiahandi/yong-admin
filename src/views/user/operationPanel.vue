@@ -23,7 +23,7 @@
       <el-form-item label="头像" prop="avatar">
         <el-upload
           class="avatar-uploader"
-          action="http://localhost:9090/file/upload"
+          action="http://106.12.17.164:9090/file/upload"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
         >

@@ -37,6 +37,17 @@
         <el-table-column type="index" label="#" width="36" :index="indexMethod" align="right" />
         <el-table-column prop="straUser" label="发布用户" align="center" />
         <el-table-column prop="straTitle" label="标题" align="center" />
+        <el-table-column prop="avatar" label="攻略主题图片" width="180" align="center">
+          <template slot-scope="scope">
+            <el-image
+              v-if="scope.row.straImage"
+              style="width: 80px; height: 80px"
+              :src="scope.row.straImage"
+              :preview-src-list="[scope.row.straImage]"
+            />
+            <div v-else>-</div>
+          </template>
+        </el-table-column>
         <el-table-column prop="straScenic" label="相关景点" align="center" />
         <el-table-column prop="straThemename" label="主题" align="center" />
         <!-- <el-table-column prop="straCollect" label="浏览量" align="center" /> -->

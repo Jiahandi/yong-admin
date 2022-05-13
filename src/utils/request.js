@@ -4,7 +4,10 @@ import store from '@/store'
 import ElementUI from 'element-ui'
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://localhost:9090', // url = base url + request url
+  // baseURL: 'http://localhost:9090', // url = base url + request url
+  // 将URL改为服务器
+  baseURL: 'http://106.12.17.164:9090', // url = base url + request url
+
   // withCredentials: true, // send cookies when cross-domain requests
   // 请求头信息
   headers: {

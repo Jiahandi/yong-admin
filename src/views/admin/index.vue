@@ -1,6 +1,6 @@
 <template>
   <div class="admin yong-list">
-    <div class="list-top">
+    <!-- <div class="list-top">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
           <el-col :span="4">
@@ -14,7 +14,7 @@
           </el-col>
         </el-row>
       </el-form>
-    </div>
+    </div> -->
     <div class="list-table">
       <div class="list-title"><font class="el-icon-notebook-1" /> {{ this.$route.meta.title }}</div>
       <div class="list-add">
